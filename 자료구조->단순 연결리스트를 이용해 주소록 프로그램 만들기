@@ -56,13 +56,14 @@ ListNode* searchNode(LinkedList_h* L, char* x) {	// main함수에서 입력한 �
 		else
 			temp = temp->link;	 // 아니면 다음 노드로 이동 (뒤의 노드의 주소값을 참조)
 	}
+	return NULL;	// 이름이 주소록에 없으면 NULL 반환
 }
 
 int  deleteNode(LinkedList_h* L, ListNode* p) {		// 리스트에서 노드 p를 삭제하는 연산
 	ListNode* pre;		  // 포인터 pre 생성
 	if (L->head == NULL) 	// 공백 리스트라면 함수 종료
 		return FALSE;
-	if (L->head->link == NULL) {	// 만약 삭제하려는 노드가 시작노드라면
+	if (L->head->link == NULL && L->head == p) {	// 만약 삭제하려는 노드가 시작노드라면
 		L->head = NULL;		// 리스트 시작 포인터를 NULL로 설정
 		return TRUE;
 	}
