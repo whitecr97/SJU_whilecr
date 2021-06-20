@@ -1,0 +1,131 @@
+#pragma warning(disable:4996)
+#include<stdio.h>
+#include<stdlib.h>
+#include <time.h>            
+
+void Copy_Arr(int arr[], int arr2[], int n) {     // 원본 배열을 복사하는 함수
+	int i;
+	
+	for (i = 0; i < n; i++) 
+		arr2[i] = arr[i];
+ }
+
+void Exchange(int n, int arr[]) {       // 교환정렬 알고리즘 연산
+	int i, j, temp;
+
+	for (i = 0; i < n - 1; i++) {
+		for (j = i + 1; j < n; j++) {
+			if (arr[i] > arr[j]) {     // 조건이 참이면 원소를 교환한다 
+				temp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = temp;
+			}
+		}
+	}
+}
+
+int Partition(int a[], int begin, int end) {      // 퀵정열에 필요한 파티션 분할 연산
+	int pivot, L, R;        // 위치 지정 변수인 pivot, L, R 선언
+	int temp;
+	                             
+	L = begin;   
+	R = end;      
+	pivot = begin;
+
+	while (L < R) {      
+		while ((a[L] < a[pivot]) && (L < R)) 
+			L++;
+		while ((a[R] >= a[pivot]) && (L < R))
+			R--;
+
+		if (L < R) {         
+			temp = a[L];
+			a[L] = a[R];
+			a[R] = temp;
+
+			if (L == pivot)     
+				pivot = R;
+		}
+	}
+
+	temp = a[pivot];
+	a[pivot] = a[R];
+	a[R] = temp;
+
+	return R;
+}
+
+void quickSort(int a[], int begin, int end) {     // 퀵정렬 알고리즘 연산
+	int p;
+
+	if (begin < end) {
+		p = Partition(a, begin, end);
+		quickSort(a, begin, p - 1);
+		quickSort(a, p + 1, end);
+	}
+}
+
+int main() {
+	int n, i, j;
+	int* arr, * arr2;
+	clock_t start_ex, end_ex, start_qu, end_qu;    // clock 값 저장할 변수 선언
+	float ex_time, qu_time;
+
+	n = 1;
+	do {
+
+		arr = (int*)malloc(n * sizeof(int));     //배열 arr의 메모리 할당
+		if (arr == NULL) {
+			printf("not enough memory!");
+			return -1;
+		}
+		arr2 = (int*)malloc(n * sizeof(int));    // 배열 arr2의 메모리 할당
+		if (arr == NULL) {
+			printf("not enough memory!");
+			return -1;
+		}
+
+		srand((unsigned)time(NULL));
+
+		for (i = 0; i < n; i++) {         // 배열 arr에 원소들을 채우는 반복문
+			arr[i] = rand() % 10000 + 1;   // 난수 생성해서 arr[i]에 대입
+
+			for (j = 0; j < i; j++) {     // 이전 원소들 중 같은 값이 있으면 i값 1 감소
+				if (arr[j] == arr[i]) {    
+					--i;                 
+				}
+			}
+		}
+
+		Copy_Arr(arr, arr2, n);   // arr 배열을 arr2 배열에 복사
+
+		start_ex = clock();    
+		Exchange(n, arr);        // 교환정렬 알고리즘 실행
+		end_ex = clock();       
+
+		start_qu = clock();
+		quickSort(arr2, 0, n - 1);      // 빠른정렬 알고리즘 실행
+		end_qu = clock();
+
+		ex_time = (float)(end_ex - start_ex) / CLOCKS_PER_SEC;    // 교환정렬의 실행시간을 계산해서 저장
+		qu_time = (float)(end_qu - start_qu) / CLOCKS_PER_SEC;    // 퀵정렬의 실행시간을 계산해서 저장
+
+		n++;
+	} while (ex_time <= qu_time);       // 퀵정렬 알고리즘 실행시간이 더 짧아지면 종료
+
+	printf("\n----빠른정렬 알고리즘의 실행시간이 더 짧아지기 시작하는 n값 출력----\n");
+	printf("n값: %d\n\n", n-1);
+	
+	printf("교환정렬 알고리즘 실행시간: %.3f 초\n", ex_time);
+	printf("빠른정렬 알고리즘 실행시간: %.3f 초\n", qu_time);
+
+
+	for (i = 0; i < n; i++) {     // 동적으로 할당한 메모리 해제 
+		free(arr[i]);
+		free(arr2[i])
+	}
+	free(arr);
+	free(arr2);
+
+	return 0;
+}
